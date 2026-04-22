@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commute Calculator</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #f8fafc;
+    }
+    .card {
+      width: min(560px, 92vw);
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.3);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: clamp(2rem, 3vw, 2.75rem);
+      letter-spacing: -0.04em;
+    }
+    p {
+      margin: 0.75rem 0 1.5rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    input[type="number"], input[type="time"], select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      background: rgba(15, 23, 42, 0.85);
+      color: #f8fafc;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #60a5fa, #38bdf8);
+      color: #0f172a;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(56, 189, 248, 0.25);
+    }
+    .result {
+      margin-top: 1.75rem;
+      background: rgba(71, 85, 105, 0.18);
+      border-radius: 18px;
+      padding: 1.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .result p {
+      margin: 0.55rem 0;
+      font-size: 1.05rem;
+    }
+    .result strong {
+      color: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Commute Calculator</h1>
+    <p>Calculate your commute commitment when you travel twice a week for <strong>3h 40m</strong> per day. Adjust the weekly trips and commute duration to see totals.</p>
+
+    <label for="daysPerWeek">Days commuting per week</label>
+    <input id="daysPerWeek" type="number" min="1" max="7" value="2" />
+
+    <label for="hoursPerDay">Hours per commute day</label>
+    <input id="hoursPerDay" type="time" value="03:40" />
+
+    <label for="weeksPerMonth">Weeks per month</label>
+    <input id="weeksPerMonth" type="number" min="1" max="5" value="4" />
+
+    <button id="calculateButton">Calculate total commute</button>
+
+    <section class="result" id="resultSection" aria-live="polite">
+      <p>No calculation yet. Press the button to compute your commute totals.</p>
+    </section>
+  </main>
+
+  <script>
+    const daysInput = document.getElementById('daysPerWeek');
+    const hoursInput = document.getElementById('hoursPerDay');
+    const weeksInput = document.getElementById('weeksPerMonth');
+    const resultSection = document.getElementById('resultSection');
+    const calculateButton = document.getElementById('calculateButton');
+
+    function formatDuration(totalMinutes) {
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${hours}h ${minutes}m`;
+    }
+
+    function calculateCommute() {
+      const daysPerWeek = Number(daysInput.value) || 2;
+      const [hours, minutes] = hoursInput.value.split(':').map(Number);
+      const weeksPerMonth = Number(weeksInput.value) || 4;
+      const minutesPerDay = hours * 60 + minutes;
+
+      const weeklyMinutes = daysPerWeek * minutesPerDay;
+      const monthlyMinutes = weeklyMinutes * weeksPerMonth;
+      const yearlyMinutes = weeklyMinutes * 52;
+
+      resultSection.innerHTML = `
+        <p><strong>Weekly commute total:</strong> ${formatDuration(weeklyMinutes)}</p>
+        <p><strong>Monthly commute total:</strong> ${formatDuration(monthlyMinutes)} (approx.)</p>
+        <p><strong>Yearly commute total:</strong> ${formatDuration(yearlyMinutes)} (52 weeks)</p>
+        <p><strong>Daily commute:</strong> ${formatDuration(minutesPerDay)} for ${daysPerWeek} days/week</p>
+      `;
+    }
+
+    calculateButton.addEventListener('click', calculateCommute);
+    window.addEventListener('DOMContentLoaded', calculateCommute);
+  </script>
+</body>
+</html>
