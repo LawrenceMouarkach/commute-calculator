@@ -112,7 +112,7 @@
 
       const dailyCost = (5 + 35);
       const weeklyCost = dailyCost * days;
-      const monthlyCost = weeklyCost * 4;
+      const monthlyCost = Math.ceil(weeklyCost * 4.33);
       const yearlyCost = weeklyCost * 52;
 
       const weeklyMinutes = dailyMinutes * days;
@@ -147,7 +147,7 @@
       const yearlyMinutes = weeklyMinutes * 52;
 
       const weeklyCost = dailyCost * days;
-      const monthlyCost = weeklyCost * 4;
+      const monthlyCost = Math.ceil(weeklyCost * 4.33);
       const yearlyCost = weeklyCost * 52;
 
       document.getElementById('customResult').innerHTML = `
