@@ -6,7 +6,7 @@
   <title>Pointless Commute Calculator</title>
   <style>
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, sans-serif;
       margin: 0;
       min-height: 100vh;
       display: flex;
@@ -16,19 +16,13 @@
       color: #f8fafc;
     }
     .card {
-      width: min(600px, 92vw);
+      width: min(650px, 92vw);
       background: rgba(15, 23, 42, 0.96);
       border-radius: 24px;
       padding: 32px;
     }
-    h1 {
-      margin-top: 0;
-      font-size: 2.4rem;
-    }
-    .highlight {
-      color: #38bdf8;
-      font-weight: bold;
-    }
+    h1 { margin-top: 0; }
+    .highlight { color: #38bdf8; font-weight: bold; }
     .breakdown {
       background: rgba(71, 85, 105, 0.2);
       padding: 1rem;
@@ -43,6 +37,7 @@
       padding: 1rem;
       font-weight: 700;
       cursor: pointer;
+      margin-top: 0.5rem;
     }
     input {
       width: 100%;
@@ -66,19 +61,17 @@
     <p>Every commute day looks like this:</p>
 
     <div class="breakdown">
-      🚗 15 min drive to station<br>
-      🚆 15 min first train<br>
-      ⏳ 15 min waiting around<br>
-      🚆 1h 20m second train<br>
-      🚶 15 min walk to office<br><br>
-      <strong>…and then I get to do it all again to get home.</strong>
+      🚗 15 min drive to station (£5)<br>
+      🚆 Train tickets (£35)<br><br>
+      <strong>…and then I do it all again to get home.</strong><br><br>
+      💸 <strong>Total per day: £80</strong>
     </div>
 
     <p>
-      That’s <span class="highlight">3h 40m per day</span> of life gone.
+      That’s <span class="highlight">3h 40m per day</span> and <span class="highlight">£80 per day</span>.
     </p>
 
-    <button onclick="calculate()">Show me how much time I've wasted</button>
+    <button onclick="calculate()">Show me how much time & money I've wasted</button>
 
     <div class="result" id="result"></div>
 
@@ -91,6 +84,12 @@
 
     <label>Days per week</label>
     <input id="days" type="number" value="2">
+
+    <label>Fuel cost (one way £)</label>
+    <input id="fuel" type="number" value="5">
+
+    <label>Train cost (one way £)</label>
+    <input id="train" type="number" value="35">
 
     <button onclick="customCalc()">Calculate yours</button>
 
@@ -105,29 +104,62 @@
     }
 
     function calculate() {
-      const daily = 220; // 3h 40m
-      const weekly = daily * 2;
-      const yearly = weekly * 52;
+      const dailyMinutes = 220;
+      const days = 2;
+
+      const dailyCost = (5 + 35) * 2; // return trip
+      const weeklyCost = dailyCost * days;
+      const monthlyCost = weeklyCost * 4;
+      const yearlyCost = weeklyCost * 52;
+
+      const weeklyMinutes = dailyMinutes * days;
+      const yearlyMinutes = weeklyMinutes * 52;
 
       document.getElementById('result').innerHTML = `
-        <p><strong>Per week:</strong> ${format(weekly)}</p>
-        <p><strong>Per year:</strong> ${format(yearly)}</p>
-        <p class="highlight">That’s ${Math.round(yearly / 60 / 24)} full days of your life every year.</p>
+        <p><strong>Time wasted:</strong></p>
+        <p>Weekly: ${format(weeklyMinutes)}</p>
+        <p>Yearly: ${format(yearlyMinutes)}</p>
+        <p class="highlight">${Math.round(yearlyMinutes / 60 / 24)} full days per year</p>
+
+        <hr style="opacity:0.2;">
+
+        <p><strong>Money wasted:</strong></p>
+        <p>Per day: £${dailyCost}</p>
+        <p>Per week: £${weeklyCost}</p>
+        <p>Per month: £${monthlyCost}</p>
+        <p class="highlight">Per year: £${yearlyCost}</p>
       `;
     }
 
     function customCalc() {
       const [h, m] = document.getElementById('hours').value.split(':').map(Number);
       const days = Number(document.getElementById('days').value);
+      const fuel = Number(document.getElementById('fuel').value);
+      const train = Number(document.getElementById('train').value);
 
-      const daily = h * 60 + m;
-      const weekly = daily * days;
-      const yearly = weekly * 52;
+      const dailyMinutes = h * 60 + m;
+      const dailyCost = (fuel + train) * 2;
+
+      const weeklyMinutes = dailyMinutes * days;
+      const yearlyMinutes = weeklyMinutes * 52;
+
+      const weeklyCost = dailyCost * days;
+      const monthlyCost = weeklyCost * 4;
+      const yearlyCost = weeklyCost * 52;
 
       document.getElementById('customResult').innerHTML = `
-        <p><strong>Weekly:</strong> ${format(weekly)}</p>
-        <p><strong>Yearly:</strong> ${format(yearly)}</p>
-        <p class="highlight">${Math.round(yearly / 60 / 24)} days of your life per year.</p>
+        <p><strong>Time:</strong></p>
+        <p>Weekly: ${format(weeklyMinutes)}</p>
+        <p>Yearly: ${format(yearlyMinutes)}</p>
+        <p class="highlight">${Math.round(yearlyMinutes / 60 / 24)} days/year</p>
+
+        <hr style="opacity:0.2;">
+
+        <p><strong>Cost:</strong></p>
+        <p>Per day: £${dailyCost}</p>
+        <p>Weekly: £${weeklyCost}</p>
+        <p>Monthly: £${monthlyCost}</p>
+        <p class="highlight">Yearly: £${yearlyCost}</p>
       `;
     }
 
